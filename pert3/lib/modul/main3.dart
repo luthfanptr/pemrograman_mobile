@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// #1 Model & entrypoint
 class Tugas {
   String judul;
   bool selesai;
@@ -10,19 +11,23 @@ class Tugas {
 class TugasModel extends ChangeNotifier {
   final List<Tugas> _items = [];
 
-  List<Tugas> get items => List.unmodifiable(_items);
-  int get jumlahSelesai => _items.where((t) => t.selesai).length;
+  // encapsulation (data hiding)
+  List<Tugas> get items => List.unmodifiable(_items); // List.unmodifiable membungkus list supaya read-only | items = public getter, _items = private var/encapsulated state
+  int get jumlahSelesai => _items.where((t) => t.selesai).length; // in memory querying, dimana var jumlahSelesai menangkap hasil query list _items WHERE t (alias Tugas) itu .selesai, .length untuk mengambil semua data yang memenuhi kondisi selesai
 
+  // fungsi buat nambah Judul Tugas
   void tambah(String judul) {
     _items.add(Tugas(judul));
     notifyListeners();
   }
 
+  // fungsi buat ambil status centang tugas ke 'index' saat ini, balik nilainya (negasi), lalu simpan nilai baru ke status centang tugas
   void toggle(int index) {
-    _items[index].selesai = !_items[index].selesai;
+    _items[index].selesai = !_items[index].selesai; // sisi kiri simpan hasil perhitungan sebelah kanan ke dlm properti selesai milik item pada posisi index. sisi kanan negasi untuk membalik nilai
     notifyListeners();
   }
 
+  // fungsi hapus status centang tugas yang ada di index
   void hapus(int index) {
     _items.removeAt(index);
     notifyListeners();
@@ -51,21 +56,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// # 2 Halaman daftar
 class TugasPage extends StatelessWidget {
   const TugasPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<TugasModel>();
+    final model = context.watch<TugasModel>(); // ambil instans objek TugasModel dari provider dan disimpan di variable model
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tugas (${model.jumlahSelesai}/${model.items.length})'),
+        title: Text('Tugas (${model.jumlahSelesai}/${model.items.length})'), // ambil model yang udah ditandai selesai / model yang ada di provider
       ),
       body: ListView.builder(
         itemCount: model.items.length,
         itemBuilder: (context, i) {
-          final t = model.items[i];
+          final t = model.items[i]; // akses daftar kumpulan tugas di dalam TugasModel, ambil satu elemen spesifik urutan index ke i dst
           return ListTile(
             leading: Checkbox(
               value: t.selesai,
@@ -74,7 +80,7 @@ class TugasPage extends StatelessWidget {
             title: Text(
               t.judul,
               style: TextStyle(
-                decoration: t.selesai ? TextDecoration.lineThrough : null,
+                decoration: t.selesai ? TextDecoration.lineThrough : null, // kalau tugas dinyatakan selesai ada garis horizontal coretan
               ),
             ),
             trailing: IconButton(
@@ -97,6 +103,7 @@ class TugasPage extends StatelessWidget {
   }
 }
 
+// # 3 Halaman tambah tugas (halaman terpisah tapi menggunakan model yang sama)
 class TambahPage extends StatefulWidget {
   const TambahPage({super.key});
 

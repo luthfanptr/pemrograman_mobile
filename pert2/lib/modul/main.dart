@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+
 void main() => runApp(const MyApp());
+
 class MyApp extends StatelessWidget {
-const MyApp({super.key});
-@override
-Widget build(BuildContext context) {
-return MaterialApp(
-title: 'Praktikum 2',
-theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
-  home: const ProfilePage(),
-);
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Praktikum 2',
+      theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
+      home: const ProfilePage(),
+    );
+  }
 }
-}
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
   @override
@@ -36,9 +39,13 @@ class ProfilePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    Text('Luthfan Putra Prakarsa',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    Text(
+                      'Luthfan Putra Prakarsa',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Text('20230801220'),
                   ],
                 ),

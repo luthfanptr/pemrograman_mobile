@@ -9,3 +9,12 @@ pert*/.*
 !pert*/pubspec.lock
 !pert*/analysis_options.yaml
 !pert*/README.md
+!pert*/docs_tugas/
+project_akhir/*
+project_akhir/.*
+!project_akhir/lib/
+!project_akhir/pubspec.yaml
+!project_akhir/pubspec.lock
+!project_akhir/analysis_options.yaml
+!project_akhir/README.md
+!project_akhir/docs_tugas/

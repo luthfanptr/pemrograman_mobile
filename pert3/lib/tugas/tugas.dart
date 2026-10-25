@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:pert3/modul/main.dart';
 import 'package:provider/provider.dart';
 
-class Barang {
-  String nama;
-  int jumlah;
-  String kategori;
-  bool dibeli;
-
-  Barang(this.nama, this.jumlah, this.kategori, {this.dibeli = false});
+class Daftar {
+  final String nama;
+  final int jumlah;
+  final String kategori;
+  bool beli;
+  Daftar(this.nama, this.jumlah, this.kategori, {this.beli = false});
 }
 
-class BelanjaModel extends ChangeNotifier {
-  final List<Barang> _items = [];
+const daftarKategori = [
+  'Pakaian',
+  'Makanan',
+  'Belanja'
+];
 
-  List<Barang> get items => List.unmodifiable(_items);
-  int get jumlahBelumDibeli => _items.where((t) => !t.dibeli).length;
+class DaftarModel extends ChangeNotifier {
+  final List<Daftar> _items = [];
 
-  void tambah(String nama, int jumlah, String kategori) {
-    _items.add(Barang(nama, jumlah, kategori));
+  List<Daftar> get items => List.unmodifiable(_items);
+  int get jumlahBeli => _items.where((b) => !b.beli).length;
+
+  void tambah(Daftar daftar) {
+    _items.add(daftar);
     notifyListeners();
   }
 
   void toggle(int index) {
-    _items[index].dibeli = !_items[index].dibeli;
+    _items[index].beli = !_items[index].beli;
     notifyListeners();
   }
 
@@ -35,8 +41,8 @@ class BelanjaModel extends ChangeNotifier {
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (context) => BelanjaModel(),
-      child: const MyApp(),
+        create: (context) => DaftarModel(),
+        child: const MyApp(),
     ),
   );
 }
@@ -47,94 +53,89 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tugas Praktikum 3',
-      theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
-      home: const BelanjaPage(),
+      title: 'Daftar Belanja',
+      theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
+      home: const DaftarPage(),
     );
   }
 }
 
-class BelanjaPage extends StatelessWidget {
-  const BelanjaPage({super.key});
+class DaftarPage extends StatelessWidget {
+  const DaftarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<BelanjaModel>();
-
+    final model = context.watch<DaftarModel>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Belum Dibeli: ${model.jumlahBelumDibeli}'),
+        title: Text('Belum Dibeli: ${model.jumlahBeli}')
       ),
       body: model.items.isEmpty
-          ? const Center(child: Text('Daftar belanja kosong'))
+          ? const Center(child: Text('Daftar masih kosong'))
           : ListView.builder(
         itemCount: model.items.length,
         itemBuilder: (context, i) {
           final b = model.items[i];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: ListTile(
-              leading: Checkbox(
-                value: b.dibeli,
-                onChanged: (_) => context.read<BelanjaModel>().toggle(i),
+          return ListTile(
+            leading: Checkbox(
+                value: b.beli,
+                onChanged: (_) => context.read<DaftarModel>().toggle(i),
+            ),
+            title: Text(
+              b.nama,
+              style: TextStyle(
+                decoration: b.beli ? TextDecoration.lineThrough : null,
               ),
-              title: Text(
-                b.nama,
-                style: TextStyle(
-                  decoration: b.dibeli ? TextDecoration.lineThrough : null,
-                ),
-              ),
-              subtitle: Text('Jumlah: ${b.jumlah} | Kategori: ${b.kategori}'),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () => context.read<BelanjaModel>().hapus(i),
-              ),
+            ),
+            subtitle: Text('${b.jumlah} buah - ${b.kategori}'),
+            trailing: IconButton(
+                icon: const Icon(Icons.delete_sweep),
+                tooltip: 'Hapus',
+                onPressed: () => context.read<DaftarModel>().hapus(i),
             ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const TambahBelanjaPage()),
-          );
-        },
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FormDaftarPage()),
+            );
+          },
         child: const Icon(Icons.add),
       ),
     );
   }
 }
 
-class TambahBelanjaPage extends StatefulWidget {
-  const TambahBelanjaPage({super.key});
+class FormDaftarPage extends StatefulWidget {
+  const FormDaftarPage({super.key});
 
   @override
-  State<TambahBelanjaPage> createState() => _TambahBelanjaPageState();
+  State<FormDaftarPage> createState() => _FormDaftarPageState();
 }
 
-class _TambahBelanjaPageState extends State<TambahBelanjaPage> {
+class _FormDaftarPageState extends State<FormDaftarPage> {
   final _formKey = GlobalKey<FormState>();
-  final _namaController = TextEditingController();
-  final _jumlahController = TextEditingController();
+  final _nama = TextEditingController();
+  final _jumlah = TextEditingController();
   String? _kategori;
 
   @override
   void dispose() {
-    _namaController.dispose();
-    _jumlahController.dispose();
+    _nama.dispose();
+    _jumlah.dispose();
     super.dispose();
   }
 
   void _simpan() {
-    if (_formKey.currentState!.validate()) {
-      context.read<BelanjaModel>().tambah(
-        _namaController.text.trim(),
-        int.parse(_jumlahController.text.trim()),
-        _kategori!,
-      );
-      Navigator.pop(context);
-    }
+    if (!_formKey.currentState!.validate()) return;
+    context.read<DaftarModel>().tambah(
+      Daftar(_nama.text.trim(), int.parse(_jumlah.text.trim()), _kategori!), 
+    );
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Daftar berhasil ditambahkan!')));
+    Navigator.pop(context);
   }
 
   @override
@@ -147,16 +148,18 @@ class _TambahBelanjaPageState extends State<TambahBelanjaPage> {
           padding: const EdgeInsets.all(16),
           children: [
             TextFormField(
-              controller: _namaController,
+              controller: _nama,
               decoration: const InputDecoration(
-                labelText: 'Nama Barang',
+                labelText: 'Nama barang',
                 border: OutlineInputBorder(),
               ),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Nama wajib diisi' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? 'Nama barang wajib diisi'
+                  : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
-              controller: _jumlahController,
+              controller: _jumlah,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Jumlah',
@@ -164,8 +167,9 @@ class _TambahBelanjaPageState extends State<TambahBelanjaPage> {
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Jumlah wajib diisi';
-                final num = int.tryParse(v.trim());
-                if (num == null || num <= 0) return 'Jumlah harus angka lebih dari 0';
+                final n = int.tryParse(v.trim());
+                if (n == null) return 'Jumlah harus berupa angka';
+                if (n <= 0) return 'Jumlah harus lebih dari 0';
                 return null;
               },
             ),
@@ -175,23 +179,19 @@ class _TambahBelanjaPageState extends State<TambahBelanjaPage> {
                 labelText: 'Kategori',
                 border: OutlineInputBorder(),
               ),
-              items: const [
-                DropdownMenuItem(value: 'Makanan', child: Text('Makanan')),
-                DropdownMenuItem(value: 'Minuman', child: Text('Minuman')),
-                DropdownMenuItem(value: 'Kebutuhan Rumah', child: Text('Kebutuhan Rumah')),
-                DropdownMenuItem(value: 'Lainnya', child: Text('Lainnya')),
+              items: [
+                for (final k in daftarKategori)
+                  DropdownMenuItem(value: k, child: Text(k)),
               ],
               onChanged: (v) => setState(() => _kategori = v),
               validator: (v) => v == null ? 'Pilih kategori' : null,
             ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _simpan,
-              child: const Text('Simpan'),
-            ),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: _simpan, child: const Text('Simpan')),
           ],
         ),
       ),
     );
+  
   }
 }

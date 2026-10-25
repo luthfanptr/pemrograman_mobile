@@ -50,7 +50,7 @@ class _InputPageState extends State<InputPage> {
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () {
-                setState(() => _salam = 'Halo, ${_controller.text}!');
+                setState(() => _salam = 'Halo ${_controller.text}!');
               },
               child: const Text('Sapa'),
             ),

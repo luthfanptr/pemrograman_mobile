@@ -1,17 +1,28 @@
-# pert3
+# Catatan
 
-A new Flutter project.
+### # setState()
+Fungsi ***setState()*** digunakan buat ubah state dari widget tanpa framework harus menggambar ulang. ***State*** adalah "data atau kondisi" yang bisa berubah ubah selama aplikasi berjalan, dan perubahan itu memengaruhi tampilan di layar.
 
-## Getting Started
+- State merupakan bagian dari StatefulWidget karena sifat tampilannya dinamis/punya memori. Widget ini bisa mengingat data saat ini dan bisa menggambar ulang layarnya jika data tersebut berubah (menggunakan setState()).
 
-This project is a starting point for a Flutter application.
+```dart
+class FormPage extends StatefulWidget {...} // kerangka luar
 
-A few resources to get you started if this is your first Flutter project:
+class _FormPageState extends State<FormPage> {...} // Otak & memorinya (state)
+```
+Di dalam class _FormPageState:
+- Tempat menyimpan variabel yang bisa berubah
+- Memiliki siklus hidup:
+    - ***initState()***: Dijalankan hanya satu kali saja saat halaman pertama kali dibuka.
+    - ***build()***: Tempat menggambar UI (bisa dipanggil berkali-kali).
+    - ***dispose()***: Dijalankan saat halaman ditutup/dihancurkan untuk bersih-bersih memori.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+### # context.watch<T>()
+Berfungsi untuk mengambil instans objek (Lookup) dari 'T' terdekat. Membaca dan membangun ulang saat data berubah. Dalam contoh konteks ***main3.dart*** yaitu
+```dart
+final model = context.watch<TugasModel>();
+```
+Mengambil instans objek ***TugasModel*** terdekat yang disediakan oleh ***ChangeNotifierProvider***. Instans tersebut kemudian disimpan ke dalam variabel ***model***.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### # context.read<T>()
+Berfungsi untuk membaca data tanpa membangun ulang

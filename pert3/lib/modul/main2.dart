@@ -11,7 +11,6 @@ class MyApp extends StatelessWidget {
       title: 'Praktikum 3',
       theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
       home: const FormPage(),
-      // home: const InputPage(),
     );
   }
 }
@@ -27,7 +26,7 @@ class _FormPageState extends State<FormPage> {
   final _formKey = GlobalKey<FormState>();
   final _nama = TextEditingController();
   final _email = TextEditingController();
-  String? _jurusan;
+  String? _jurusan; // String? nullable (null safety) karena sebelum lengkapin data masih kosong jurusannya
   bool _setuju = false;
 
   @override
@@ -38,10 +37,11 @@ class _FormPageState extends State<FormPage> {
   }
 
   void _kirim() {
+    // cek validator field input untuk berjalan serentak, kalo ada 1 yang ga lolos, blok if ga dieksekusi
     if (_formKey.currentState!.validate()) {
       final jurusan = _jurusan ?? '-';
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terdaftar: ${_nama.text} ($jurusan)')),
+        SnackBar(content: Text('Terdaftar: ${_nama.text} ($jurusan)')), // .text getter khusus untuk ambil data teks dari String yang diketik user karena dia tipe TextEditingController
       );
     }
   }
@@ -58,11 +58,11 @@ class _FormPageState extends State<FormPage> {
             TextFormField(
               controller: _nama,
               decoration: const InputDecoration(
-                labelText: 'Nama lengkap',
+                labelText: 'Nama Lengkap',
                 border: OutlineInputBorder(),
               ),
               validator: (v) =>
-              (v == null || v.trim().isEmpty) ? 'Nama wajib diisi' : null,
+                  (v == null || v.trim().isEmpty) ? 'Nama wajib diisi' : null, // trim untuk motong char spasi kosong (" ")
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -88,18 +88,18 @@ class _FormPageState extends State<FormPage> {
                 DropdownMenuItem(value: 'SI', child: Text('Sistem Informasi')),
                 DropdownMenuItem(value: 'TE', child: Text('Teknik Elektro')),
               ],
-              onChanged: (v) => setState(() => _jurusan = v),
-              validator: (v) => v == null ? 'Pilih jurusan' : null,
+              onChanged: (v) => setState(() => _jurusan = v), // memastikan variabel _jurusan yang tersedia dipilih supaya bisa divalidasi _kirim
+              validator: (v) => v == null ? 'Pilihan Jurusan' : null,
             ),
             CheckboxListTile(
               title: const Text('Saya menyetujui ketentuan'),
               value: _setuju,
               controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (v) => setState(() => _setuju = v ?? false),
+              onChanged: (v) => setState(() => _setuju = v ?? false), // setState() render ulang ketersediaan tombol daftar
             ),
             ElevatedButton(
-              onPressed: _setuju ? _kirim : null,
-              child: const Text('Daftar'),
+                onPressed: _setuju ? _kirim : null, // logic ternary, if setuju true panggil kirim, if false panggil null
+                child: const Text('Daftar'),
             ),
           ],
         ),
@@ -107,5 +107,3 @@ class _FormPageState extends State<FormPage> {
     );
   }
 }
-
-// class InputPage extends StatefulWidget { ... }

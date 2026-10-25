@@ -1,23 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pert2/tugas/tugas.dart';
 
-class Kontak {
-  final String nama;
-  final String telepon;
-  final String email;
-
-  const Kontak(this.nama, this.telepon, this.email);
+void main() {
+  runApp(const MyApp());
 }
-
-const daftarKontak = [
-  Kontak('Ahmad Suseno', '081234567890', 'ahmad@email.com'),
-  Kontak('Bunga Citra', '082345678901', 'bunga@email.com'),
-  Kontak('Chantika', '083456789012', 'chantika@email.com'),
-  Kontak('Dian Sastro', '084567890123', 'dian@email.com'),
-  Kontak('Eko Gandoz', '085678901234', 'eko@email.com'),
-  Kontak('Fajar M', '086789012345', 'fajar@email.com'),
-];
-
-void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -25,37 +11,53 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tugas Praktikum 2',
-      theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
-      home: const KontakPage(),
+      title: 'Tugas Pert2',
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.grey)),
+      home: const MyContact(),
     );
   }
 }
 
-class KontakPage extends StatelessWidget {
-  const KontakPage({super.key});
+class Contact {
+  final String nama;
+  final int nomor;
+  final String email;
+  const Contact(this.nama, this.nomor, this.email);
+}
+
+const daftarKontak = [
+  Contact('Aiman', 0812345, 'aiman@gmail.com'),
+  Contact('Bambina', 0212345, 'bambi@gmail.com'),
+  Contact('Cahyani', 081289034, 'cahyani@gmail.com'),
+  Contact('Dendi', 0212310513, 'dendi@gmail.com'),
+  Contact('Evan', 08581230, 'evan@gmail.com'),
+  Contact('Fahmi', 0812381023, 'fahmi@gmail.com'),
+];
+
+class MyContact extends StatelessWidget {
+  const MyContact({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Daftar Kontak')),
+      appBar: AppBar(title: const Text('Kontak Saya')),
       body: ListView.builder(
         itemCount: daftarKontak.length,
         itemBuilder: (context, index) {
-          final kontak = daftarKontak[index];
+          final item = daftarKontak[index];
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: ListTile(
-              leading: CircleAvatar(
-                child: Text(kontak.nama[0].toUpperCase()),
-              ),
-              title: Text(kontak.nama),
-              subtitle: Text(kontak.telepon),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              leading: const Icon(Icons.person),
+              title: Text(item.nama),
+              subtitle: Text(item.email),
+              trailing: const Icon(Icons.chevron_right),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => DetailKontakPage(kontak: kontak)),
+                  MaterialPageRoute(
+                    builder: (context) => DetailContact(contact: item),
+                  ),
                 );
               },
             ),
@@ -66,48 +68,28 @@ class KontakPage extends StatelessWidget {
   }
 }
 
-class DetailKontakPage extends StatelessWidget {
-  final Kontak kontak;
-
-  const DetailKontakPage({super.key, required this.kontak});
+class DetailContact extends StatelessWidget {
+  final Contact contact;
+  const DetailContact({super.key, required this.contact});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(kontak.nama)),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      appBar: AppBar(title: Text(contact.nama)),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 50,
-              child: Text(kontak.nama[0].toUpperCase(), style: const TextStyle(fontSize: 40)),
-            ),
-            const SizedBox(height: 24, width: double.infinity),
-            Text(kontak.nama, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            const Icon(Icons.contacts, size: 50),
             const SizedBox(height: 16),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.phone),
-                title: Text(kontak.telepon),
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.email),
-                title: Text(kontak.email),
-              ),
-            ),
-            const Spacer(),
-            ElevatedButton.icon(
+            Text(contact.nama, style: const TextStyle(fontSize: 25)),
+            Text(contact.email, style: const TextStyle(fontSize: 15)),
+            Text('0${contact.nomor}', style: const TextStyle(fontSize: 15)),
+            const SizedBox(height: 30),
+            ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back),
-              label: const Text('Kembali'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
-            )
+              child: const Text('kembali'),
+            ),
           ],
         ),
       ),
