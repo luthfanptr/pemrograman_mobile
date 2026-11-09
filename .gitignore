@@ -17,4 +17,6 @@ project_akhir/.*
 !project_akhir/pubspec.lock
 !project_akhir/analysis_options.yaml
 !project_akhir/README.md
-!project_akhir/docs_tugas/
+!project_akhir/docs/
+backend/db/*
+backend/db/data/*
