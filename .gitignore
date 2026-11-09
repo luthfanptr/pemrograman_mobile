@@ -10,6 +10,7 @@ pert*/.*
 !pert*/analysis_options.yaml
 !pert*/README.md
 !pert*/docs_tugas/
+!pert3/tugas_GetX/
 project_akhir/*
 project_akhir/.*
 !project_akhir/lib/
@@ -20,3 +21,11 @@ project_akhir/.*
 !project_akhir/docs/
 backend/db/*
 backend/db/data/*
+
+tabungku_layout/*
+tabungku_layout/.*
+!tabungku_layout/lib/
+!tabungku_layout/pubspec.yaml
+!tabungku_layout/pubspec.lock
+!tabungku_layout/analysis_options.yaml
+!tabungku_layout/README.md
